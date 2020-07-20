@@ -62,9 +62,17 @@ HTMLWidgets.widget({
         tooltipGroupConnector = options.tooltipGroupConnector,
         precision = options.precision,
         clickAction = options.clickAction,
-        clickGroupAction = options.clickGroupAction;
+        clickGroupAction = options.clickGroupAction,
+		percentTooltips = options.percentTooltips;
 
     d3.select(el).selectAll("div.d3-tip").remove();
+	
+	if (percentTooltips) {
+		var rowSums = [];
+		for (i = 0; i < matrix.length; i++) {
+			rowSums.push(matrix[i].reduce(function(a, b){return a + b;}, 0));
+		}
+	}
 
     if (showTooltips) {
         var chordTip = d3.tip()
@@ -78,10 +86,17 @@ HTMLWidgets.widget({
                              var i = d.source.index,
                                  j = d.target.index;
                              // values
-                             var vij = sigFigs(matrix[i][j], precision),
-                                 vji = sigFigs(matrix[j][i], precision);
-                             var dir1 = tooltipNames[i] + tooltipGroupConnector + tooltipNames[j] + ": " + vij + tooltipUnit,
-                                 dir2 = tooltipNames[j] + tooltipGroupConnector + tooltipNames[i] + ": " + vji + tooltipUnit;
+							 if (percentTooltips) {
+								 var vij = sigFigs((matrix[i][j]/rowSums[i])*100, precision),
+									 vji = sigFigs((matrix[j][i]/rowSums[j])*100, precision);
+								 var addUnit = "%"; 
+							 } else {
+								 var vij = sigFigs(matrix[i][j], precision),
+									 vji = sigFigs(matrix[j][i], precision);
+								 var addUnit = tooltipUnit; 
+							 }
+                             var dir1 = tooltipNames[i] + tooltipGroupConnector + tooltipNames[j] + ": " + vij + addUnit,
+                                 dir2 = tooltipNames[j] + tooltipGroupConnector + tooltipNames[i] + ": " + vji + addUnit;
                              if (type == "directional") {
                                  if (i == j) {
                                      return dir1;

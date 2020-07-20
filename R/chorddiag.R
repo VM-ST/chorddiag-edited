@@ -72,6 +72,7 @@
 #'   purpose of filtering the data on other visualizations
 #' @param clickGroupAction character string containing JavaScript code to be executed
 #'   on a mouse click so that shiny can get the groupIndex
+#' @param percentTooltips A logical scalar (defaults to FALSE). If set to TRUE, flow tooltips are displayed as percents
 #'
 #'
 #' @source Based on \url{http://bl.ocks.org/mbostock/4062006} with several
@@ -116,7 +117,8 @@ chorddiag <- function(data,
                       tooltipGroupConnector = " &#x25B6; ",
                       precision = NULL,
                       clickAction = NULL,
-                      clickGroupAction = NULL) {
+                      clickGroupAction = NULL,
+					            percentTooltips = FALSE) {
 
     if (!is.matrix(data))
         stop("'data' must be a matrix class object.")
@@ -220,7 +222,8 @@ chorddiag <- function(data,
                                  tooltipGroupConnector = tooltipGroupConnector,
                                  precision = precision,
                                  clickAction = clickAction,
-                                 clickGroupAction = clickGroupAction))
+                                 clickGroupAction = clickGroupAction,
+								 percentTooltips = percentTooltips))
     params = Filter(Negate(is.null), params)
 
     # create widget
@@ -231,7 +234,7 @@ chorddiag <- function(data,
         height = height,
         htmlwidgets::sizingPolicy(padding = 0,
                                   browser.fill = TRUE),
-        package = 'chorddiag'
+        package = 'chorddiag.edited'
     )
 }
 
@@ -242,7 +245,7 @@ chorddiag <- function(data,
 #' @param height A valid CSS unit for the height of the chord diagram output.
 #' @export
 chorddiagOutput <- function(outputId, width = '90%', height = '350px'){
-    htmlwidgets::shinyWidgetOutput(outputId, 'chorddiag', width, height, package = 'chorddiag')
+    htmlwidgets::shinyWidgetOutput(outputId, 'chorddiag', width, height, package = 'chorddiag.edited')
 }
 
 #' Widget render function for use in Shiny
